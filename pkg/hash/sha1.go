@@ -6,6 +6,10 @@ import (
 )
 
 type SHA1 string
+// String returns the SHA1 hash as a string.
+func (h SHA1) String() string {
+	return string(h)
+}
 
 func Hash(data []byte) SHA1 {
 	// SHA1の計算を行うために、crypto/sha1パッケージを使用
