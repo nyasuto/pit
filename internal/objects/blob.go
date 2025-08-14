@@ -13,23 +13,19 @@ import (
 
 type ObjectType string
 
-const (
-	ObjectTypeBlob   ObjectType = "blob"
-	ObjectTypeTree   ObjectType = "tree"
-	ObjectTypeCommit ObjectType = "commit"
-)
 
 type object struct {
 	Type ObjectType // Type of the object (e.g., "blob", "tree", "commit")
 	Hash hash.SHA1  // SHA1 hash of the object
-	Data string     // Raw data of the object
+	Data []byte     // Raw data of the object
 }
 
 func New(t ObjectType, data []byte) object {
 	size := len(data)
-	header := fmt.Sprintf("%s %d\x00", t, size)
-	content := header + string(data)
-	h := hash.Hash([]byte(content))
+	header := []byte(fmt.Sprintf("%s %d\x00", t, size))
+	
+	content := append(header, data...)
+	h := hash.Hash(content)
 
 	return object{
 		Type: t,
@@ -79,7 +75,7 @@ func Read(path string) (object, error) {
 	return object{
 		Type: t,
 		Hash: h,
-		Data: string(inflated),
+		Data: inflated,
 	}, nil
 }
 

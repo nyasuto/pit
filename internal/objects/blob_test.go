@@ -16,10 +16,10 @@ import (
 func Test_New(t *testing.T) {
 	data := []byte("Hello, World\n")
 	obj := New(ObjectTypeBlob, data)
-
+	expectedHash, _ := hash.Parse("3fa0d4b98289a95a7cd3a45c9545e622718f8d2b")
 	assert.Equal(t, ObjectTypeBlob, obj.Type)
-	assert.Equal(t, "blob 13\x00Hello, World\n", obj.Data)
-	assert.Equal(t, hash.SHA1("3fa0d4b98289a95a7cd3a45c9545e622718f8d2b"), obj.Hash)
+	assert.Equal(t, []byte("blob 13\x00Hello, World\n"), obj.Data)
+	assert.Equal(t, expectedHash, obj.Hash)
 }
 
 func Test_Write(t *testing.T) {
@@ -49,13 +49,14 @@ func Test_Write(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Stored content should be the exact header+payload
-	assert.Equal(t, obj.Data, string(inflated))
+	assert.Equal(t, obj.Data, inflated)
 
 	assert.Equal(t, "3fa0d4b98289a95a7cd3a45c9545e622718f8d2b", hex)
+	expectedHash, _ := hash.Parse("3fa0d4b98289a95a7cd3a45c9545e622718f8d2b")
 
 	obj, err = Read(name)
 	assert.NoError(t, err)
 	assert.Equal(t, ObjectTypeBlob, obj.Type)
-	assert.Equal(t, "blob 13\x00Hello, World\n", obj.Data)
-	assert.Equal(t, hash.SHA1("3fa0d4b98289a95a7cd3a45c9545e622718f8d2b"), obj.Hash)
+	assert.Equal(t, []byte("blob 13\x00Hello, World\n"), obj.Data)
+	assert.Equal(t, expectedHash, obj.Hash)
 }
