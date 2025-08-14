@@ -67,7 +67,12 @@ func Read(path string) (object, error) {
 	}
 	t := ObjectType(parts[0])
 	size := len(data)
-	if size != int(parts[1][0]) {
+	
+	// サイズをヘッダーから取得
+	sizeInHeader := 0
+	fmt.Sscanf(string(parts[1]), "%d", &sizeInHeader)
+
+	if size !=  sizeInHeader{
 		return object{}, fmt.Errorf("object size mismatch: expected %d, got %d", size, len(data))
 	}
 	h := hash.Hash(inflated)
