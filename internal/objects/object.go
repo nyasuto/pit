@@ -98,7 +98,7 @@ func Read(path string) (object, error) {
 }
 
 func Write(o object) (name string, err error) {
-	if o.Type != ObjectTypeBlob && o.Type != ObjectTypeTree {
+	if o.Type != ObjectTypeBlob && o.Type != ObjectTypeTree && o.Type != ObjectTypeCommit {
 		return "", fmt.Errorf("unsupported object type: %s", o.Type)
 	}
 	hex := o.Hash.String()
