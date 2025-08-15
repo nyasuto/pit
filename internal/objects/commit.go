@@ -54,27 +54,27 @@ func NewCommitWithParent(tree hash.SHA1, parents *hash.SHA1, message string) *Co
 }
 func (c *Commit) Serialize() []byte {
 	var data []byte
-	
+
 	// tree行
 	data = append(data, []byte("tree "+c.Tree.String()+"\n")...)
-	
+
 	// parent行（存在する場合のみ）
 	if c.Parents != nil {
 		data = append(data, []byte("parent "+c.Parents.String()+"\n")...)
 	}
-	
+
 	// author行とcommitter行（Author情報が設定されている場合）
 	if c.Author.Name != "" {
 		timestamp := c.Author.When.Unix()
-		authorLine := fmt.Sprintf("author %s <%s> %d %s\n", 
+		authorLine := fmt.Sprintf("author %s <%s> %d %s\n",
 			c.Author.Name, c.Author.Email, timestamp, c.Author.TimeZone)
-		committerLine := fmt.Sprintf("committer %s <%s> %d %s\n", 
+		committerLine := fmt.Sprintf("committer %s <%s> %d %s\n",
 			c.Author.Name, c.Author.Email, timestamp, c.Author.TimeZone)
-		
+
 		data = append(data, []byte(authorLine)...)
 		data = append(data, []byte(committerLine)...)
 	}
-	
+
 	// 空行 + メッセージ
 	data = append(data, []byte("\n"+c.Message+"\n")...)
 	return data

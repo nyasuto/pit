@@ -2,41 +2,109 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"strconv"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
 
 func initCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "init",
-		Short: "initialize repository",
-		Args:  cobra.RangeArgs(2, 2),
+		Use:   "init [directory]",
+		Short: "Initialize a new pit repository",
+		Long: `Initialize a new pit repository in the specified directory.
+If no directory is specified, initializes in the current directory.
+
+This creates a .pit directory with the necessary structure.`,
+		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 0 {
-				return nil
+			// デフォルトは現在のディレクトリ
+			targetDir := "."
+			if len(args) > 0 {
+				targetDir = args[0]
 			}
 
-			itemOne, err := strconv.Atoi(args[0])
-
-			if err != nil {
-				log.Fatal(err)
-				return nil
-			}
-
-			itemTwo, err := strconv.Atoi(args[1])
-
-			if err != nil {
-				log.Fatal(err)
-				return nil
-			}
-
-			fmt.Println(itemOne + itemTwo)
-
-			return nil
+			return initRepository(targetDir)
 		},
 	}
 
 	return cmd
+}
+
+func initRepository(targetDir string) error {
+	// 絶対パスに変換
+	absPath, err := filepath.Abs(targetDir)
+	if err != nil {
+		return fmt.Errorf("failed to resolve path: %w", err)
+	}
+
+	// .pitディレクトリのパス
+	pitDir := filepath.Join(absPath, ".pit")
+
+	// .pitディレクトリが既に存在するかチェック
+	if _, err := os.Stat(pitDir); !os.IsNotExist(err) {
+		return fmt.Errorf("repository already exists at %s", pitDir)
+	}
+
+	// ディレクトリ構造を作成
+	if err := createRepositoryStructure(pitDir); err != nil {
+		return fmt.Errorf("failed to create repository structure: %w", err)
+	}
+
+	// 初期ファイルを作成
+	if err := createInitialFiles(pitDir); err != nil {
+		return fmt.Errorf("failed to create initial files: %w", err)
+	}
+
+	fmt.Printf("Initialized empty Pit repository in %s\n", pitDir)
+	return nil
+}
+
+func createRepositoryStructure(pitDir string) error {
+	// 必要なディレクトリを作成
+	dirs := []string{
+		pitDir,
+		filepath.Join(pitDir, "objects"),
+		filepath.Join(pitDir, "refs"),
+		filepath.Join(pitDir, "refs", "heads"),
+		filepath.Join(pitDir, "refs", "tags"),
+	}
+
+	for _, dir := range dirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return fmt.Errorf("failed to create directory %s: %w", dir, err)
+		}
+	}
+
+	return nil
+}
+
+func createInitialFiles(pitDir string) error {
+	// HEAD ファイルを作成 (デフォルトブランチはmain)
+	headPath := filepath.Join(pitDir, "HEAD")
+	headContent := "ref: refs/heads/main\n"
+	if err := os.WriteFile(headPath, []byte(headContent), 0644); err != nil {
+		return fmt.Errorf("failed to create HEAD file: %w", err)
+	}
+
+	// config ファイルを作成
+	configPath := filepath.Join(pitDir, "config")
+	configContent := `[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+`
+	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+		return fmt.Errorf("failed to create config file: %w", err)
+	}
+
+	// description ファイルを作成
+	descPath := filepath.Join(pitDir, "description")
+	descContent := "Unnamed repository; edit this file 'description' to name the repository.\n"
+	if err := os.WriteFile(descPath, []byte(descContent), 0644); err != nil {
+		return fmt.Errorf("failed to create description file: %w", err)
+	}
+
+	return nil
 }

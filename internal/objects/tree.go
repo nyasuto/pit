@@ -25,7 +25,7 @@ func (t *Tree) toObject() object {
 	return t.serialize()
 
 }
-func (t *Tree) FindEntry(name string) (TreeEntry, bool)       {
+func (t *Tree) FindEntry(name string) (TreeEntry, bool) {
 	for _, entry := range t.Entries {
 		if entry.Name == name {
 			return entry, true
@@ -33,7 +33,7 @@ func (t *Tree) FindEntry(name string) (TreeEntry, bool)       {
 	}
 	return TreeEntry{}, false
 }
-func (t *Tree) RemoveEntry(name string) bool                  {
+func (t *Tree) RemoveEntry(name string) bool {
 	for i, entry := range t.Entries {
 		if entry.Name == name {
 			t.Entries = append(t.Entries[:i], t.Entries[i+1:]...)
@@ -57,7 +57,7 @@ func NewTree() *Tree {
 	}
 }
 
-func (t *Tree) AddEntry(entry TreeEntry) error{
+func (t *Tree) AddEntry(entry TreeEntry) error {
 	if entry.Name == "" {
 		return fmt.Errorf("entry name cannot be empty")
 	}
