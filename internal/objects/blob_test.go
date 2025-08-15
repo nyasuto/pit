@@ -5,7 +5,6 @@ import (
 	"compress/zlib"
 	"io"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -13,22 +12,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_New(t *testing.T) {
+func Test_NewBlob(t *testing.T) {
 	data := []byte("Hello, World\n")
-	obj := New(ObjectTypeBlob, data)
+	obj := NewBlob(data)
 	expectedHash, _ := hash.Parse("3fa0d4b98289a95a7cd3a45c9545e622718f8d2b")
 	assert.Equal(t, ObjectTypeBlob, obj.Type)
 	assert.Equal(t, []byte("blob 13\x00Hello, World\n"), obj.Data)
 	assert.Equal(t, expectedHash, obj.Hash)
 }
 
-func Test_Write(t *testing.T) {
+func Test_WriteBlob(t *testing.T) {
 	data := []byte("Hello, World\n")
-	obj := New(ObjectTypeBlob, data)
+	obj := NewBlob(data)
 	// Expected git object path: .git/objects/3f/a0d4...
 	hex := obj.Hash.String()
-	dir := filepath.Join(".test-git", "objects", hex[:2])
-	path := filepath.Join(dir, hex[2:])
 
 	name, err := Write(obj)
 	assert.NoError(t, err)
@@ -38,7 +35,7 @@ func Test_Write(t *testing.T) {
 		_ = os.Remove(name)
 	}()
 	// Read the stored object (zlib-compressed) and inflate
-	raw, err := os.ReadFile(path)
+	raw, err := os.ReadFile(name)
 	assert.NoError(t, err)
 
 	zr, err := zlib.NewReader(bytes.NewReader(raw))
