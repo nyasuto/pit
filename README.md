@@ -1,4 +1,4 @@
-# 🐹 Pika
+# 🕳️ Pit
 
 **A tiny, educational Git implementation in Go**
 
@@ -22,7 +22,7 @@ Pitは、Gitの内部構造を学ぶために作る、小さくて可愛いGit�
 ## 🏗️ アーキテクチャ
 
 ```
-pika/
+pit/
 ├── cmd/
 │   └── pit/
 │       └── main.go          # CLIエントリーポイント
@@ -54,50 +54,50 @@ pika/
 **目標**: Gitの3つの基本オブジェクトを実装
 
 - [x] プロジェクト初期設定
-- [ ] Blob Object（ファイル内容の保存）
-- [ ] Tree Object（ディレクトリ構造）
-- [ ] Commit Object（コミット情報）
-- [ ] SHA-1ハッシュ計算
-- [ ] zlib圧縮・展開
+- [x] Blob Object（ファイル内容の保存）
+- [x] Tree Object（ディレクトリ構造）
+- [x] Commit Object（コミット情報）
+- [x] SHA-1ハッシュ計算
+- [x] zlib圧縮・展開
 
 **コマンド**:
 ```bash
-pika hash-object <file>    # ファイルをBlob Objectとして保存
-pika cat-file <hash>       # オブジェクトの内容を表示
+pit hash-object <file>    # ファイルをBlob Objectとして保存
+pit cat-file <hash>       # オブジェクトの内容を表示
 ```
 
 ### Phase 2: Basic Commands（基本コマンド）🛠️
 **目標**: 最小限のGit操作を可能に
 
-- [ ] `pika init` - リポジトリ初期化
-- [ ] `pika add` - ステージングエリアに追加
-- [ ] `pika commit` - コミット作成
-- [ ] `pika log` - コミット履歴表示
-- [ ] `pika status` - 現在の状態表示
+- [ ] `pit init` - リポジトリ初期化
+- [ ] `pit add` - ステージングエリアに追加
+- [ ] `pit commit` - コミット作成
+- [ ] `pit log` - コミット履歴表示
+- [ ] `pit status` - 現在の状態表示
 
 **この時点で**: 基本的なバージョン管理が可能に！
 
 ### Phase 3: Branches（ブランチ機能）🌿
 **目標**: ブランチの作成と切り替え
 
-- [ ] `pika branch` - ブランチ一覧・作成
-- [ ] `pika checkout` - ブランチ切り替え
+- [ ] `pit branch` - ブランチ一覧・作成
+- [ ] `pit checkout` - ブランチ切り替え
 - [ ] HEAD参照の管理
 - [ ] refs/heads/の実装
 
 ### Phase 4: Diff & Merge（差分とマージ）🔀
 **目標**: 変更の可視化と統合
 
-- [ ] `pika diff` - 差分表示（簡易版）
-- [ ] `pika merge` - Fast-forwardマージのみ
+- [ ] `pit diff` - 差分表示（簡易版）
+- [ ] `pit merge` - Fast-forwardマージのみ
 - [ ] 3-way mergeの基礎実装（チャレンジ）
 
 ### Phase 5: Remote（リモート機能）🌍
-**目標**: 他のPikaリポジトリとの同期
+**目標**: 他のPitリポジトリとの同期
 
-- [ ] `pika clone` - ローカルクローン
-- [ ] `pika push` - ローカルプッシュ
-- [ ] `pika pull` - ローカルプル
+- [ ] `pit clone` - ローカルクローン
+- [ ] `pit push` - ローカルプッシュ
+- [ ] `pit pull` - ローカルプル
 - [ ] Packfile形式の実装（Optional）
 
 ### Phase 6: Performance（最適化）⚡
@@ -132,18 +132,18 @@ pika cat-file <hash>       # オブジェクトの内容を表示
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/yourusername/pika.git
+git clone https://github.com/nyasuto/pit.git
 
 # ビルド
-cd pika
-go build -o pika cmd/pika/main.go
+cd pit
+go build -o pit cmd/pit/main.go
 
 # 最初のコマンドを試す
-./pika init my-repo
+./pit init my-repo
 cd my-repo
-echo "Hello, Pika!" > hello.txt
-../pika add hello.txt
-../pika commit -m "First commit with Pika!"
+echo "Hello, Pit!" > hello.txt
+../pit add hello.txt
+../pit commit -m "First commit with Pit!"
 ```
 
 ## 🧪 テスト
@@ -163,7 +163,7 @@ go test -bench=. ./...
 
 | Phase | 状態 | 進捗 |
 |-------|------|------|
-| Phase 1: Core Objects | 🚧 開発中 | 20% |
+| Phase 1: Core Objects | ✅ 完了 | 100% |
 | Phase 2: Basic Commands | ⏳ 待機中 | 0% |
 | Phase 3: Branches | ⏳ 待機中 | 0% |
 | Phase 4: Diff & Merge | ⏳ 待機中 | 0% |
@@ -196,23 +196,23 @@ go test -bench=. ./...
 
 MIT License - 学習目的で自由に使用・改変してください
 
-## 🐹 なぜ「Pika」？
+## 🕳️ なぜ「Pit」？
 
-ナキウサギ（Pika）は小さくて素早い動物。このプロジェクトも：
-- **小さい**: 最小限の実装
-- **素早い**: シンプルで高速
-- **可愛い**: 親しみやすいコード
+Git（ギット）の内部を掘り下げる「穴（Pit）」のように、深く学ぶプロジェクト：
+- **深い**: Gitの内部構造を深く理解
+- **掘る**: 表面的でなく、本質を掘り下げる
+- **学ぶ**: 知識の穴を埋める教育ツール
 
 ---
 
-**現在のステータス**: 🚧 Phase 1 実装中...
+**現在のステータス**: ✅ Phase 1 完了！Phase 2 開始準備中...
 
 ```go
-// 今書いているコード
-func (b *Blob) Hash() string {
-    // ピカッと素早くハッシュ化！
-    return sha1.Sum(b.content)
-}
+// 完成したコア機能
+✅ Blob:   NewBlob(data []byte) object
+✅ Tree:   NewTree(), AddEntry(), serialize()  
+✅ Commit: NewCommit(tree, message), SetAuthor()
+✅ 全テスト成功、Git仕様準拠、互換性確保
 ```
 
-*Last Updated: 2025-08-14*
+*Last Updated: 2025-08-15*
