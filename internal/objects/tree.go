@@ -25,15 +25,55 @@ func (t *Tree) toObject() object {
 	return t.serialize()
 
 }
-
+func (t *Tree) FindEntry(name string) (TreeEntry, bool)       {
+	for _, entry := range t.Entries {
+		if entry.Name == name {
+			return entry, true
+		}
+	}
+	return TreeEntry{}, false
+}
+func (t *Tree) RemoveEntry(name string) bool                  {
+	for i, entry := range t.Entries {
+		if entry.Name == name {
+			t.Entries = append(t.Entries[:i], t.Entries[i+1:]...)
+			return true
+		}
+	}
+	return false
+}
+func (t *Tree) UpdateEntry(name string, hash hash.SHA1) error {
+	for i, entry := range t.Entries {
+		if entry.Name == name {
+			t.Entries[i].Hash = hash
+			return nil
+		}
+	}
+	return fmt.Errorf("entry %s not found", name)
+}
 func NewTree() *Tree {
 	return &Tree{
 		Entries: []TreeEntry{},
 	}
 }
 
-func (t *Tree) AddEntry(entry TreeEntry) {
+func (t *Tree) AddEntry(entry TreeEntry) error{
+	if entry.Name == "" {
+		return fmt.Errorf("entry name cannot be empty")
+	}
+	if entry.Hash == (hash.SHA1{}) {
+		return fmt.Errorf("entry hash cannot be empty")
+	}
+	if entry.Mode == 0 {
+		return fmt.Errorf("entry mode cannot be zero")
+	}
+	// Check for duplicate entries
+	_, find := t.FindEntry(entry.Name)
+	if find {
+		return fmt.Errorf("entry %s already exists", entry.Name)
+	}
 	t.Entries = append(t.Entries, entry)
+	return nil
 }
 
 // NewTree creates a new tree object from the provided entries.
