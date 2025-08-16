@@ -11,6 +11,7 @@ import (
 type CLI struct {
 	Init       cmd.InitCmd       `cmd:"" help:"Initialize a new pit repository"`
 	HashObject cmd.HashObjectCmd `cmd:"" help:"Compute hash of a file"`
+	CatFile    cmd.CatFileCmd    `cmd:"" help:"Print file from hash"`
 }
 
 func main() {
