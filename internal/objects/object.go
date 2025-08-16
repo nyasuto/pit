@@ -3,10 +3,12 @@ package objects
 import (
 	"bytes"
 	"compress/zlib"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/nyasuto/pit/pkg/hash"
 )
@@ -54,9 +56,68 @@ func New(t ObjectType, data []byte) object {
 }
 
 func (o *object) String() string {
-	return fmt.Sprintf("%s", o.Data)
+	switch o.Type {
+	case ObjectTypeBlob:
+		// blobは生データ（ヘッダー除去済み）
+		return fmt.Sprintf("%s", o.Data)
+	case ObjectTypeTree:
+		// treeは人間が読める形式に変換
+		return formatTreeContent(o.Data)
+	case ObjectTypeCommit:
+		// commitも人間が読める形式
+		//return extractContentFromData(o.Data)
+	default:
+		return string(o.Data)
+	}
+	return fmt.Sprintf("Object Type: %s, Hash: %s, Data Length: %d", o.Type, o.Hash.String(), len(o.Data))
 }
 
+func formatTreeContent(data []byte) string {
+	// ヘッダーをスキップ
+	headerEnd := bytes.IndexByte(data, 0)
+	if headerEnd < 0 {
+		return "invalid tree object"
+	}
+
+	content := data[headerEnd+1:]
+	var result strings.Builder
+
+	for len(content) > 0 {
+		// モードを読み取り
+		spaceIdx := bytes.IndexByte(content, ' ')
+		if spaceIdx < 0 {
+			break
+		}
+		mode := string(content[:spaceIdx])
+		content = content[spaceIdx+1:]
+
+		// ファイル名を読み取り
+		nullIdx := bytes.IndexByte(content, 0)
+		if nullIdx < 0 {
+			break
+		}
+		name := string(content[:nullIdx])
+		content = content[nullIdx+1:]
+
+		// ハッシュを読み取り（20バイト）
+		if len(content) < 20 {
+			break
+		}
+		hash := hex.EncodeToString(content[:20])
+		content = content[20:]
+
+		// Git形式で出力
+		objType := "blob"
+		if mode == "40000" {
+			objType = "tree"
+		}
+
+		result.WriteString(fmt.Sprintf("%s %s %s\t%s\n",
+			mode, objType, hash, name))
+	}
+
+	return result.String()
+}
 func ReadFromHash(hashString string) (obj object, err error) {
 	h, err := hash.Parse(hashString)
 	if err != nil {

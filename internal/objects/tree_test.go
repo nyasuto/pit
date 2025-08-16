@@ -37,7 +37,7 @@ func Test_SerializeTree(t *testing.T) {
 	tree.AddEntry(TreeEntry{Name: "file1.txt", Hash: testHash1, Mode: ModeFile})
 	tree.AddEntry(TreeEntry{Name: "dir1", Hash: testHash2, Mode: ModeDir})
 
-	obj := tree.serialize()
+	obj := tree.Serialize()
 	assert.Equal(t, ObjectTypeTree, obj.Type)
 
 	// Gitの正しい形式: mode name\0binary-hash
@@ -68,7 +68,7 @@ func Test_TreeEntrySorting(t *testing.T) {
 	tree.AddEntry(TreeEntry{Name: "dir1", Hash: testHash3, Mode: ModeDir})
 	tree.AddEntry(TreeEntry{Name: "dir2", Hash: testHash4, Mode: ModeDir})
 
-	obj := tree.serialize()
+	obj := tree.Serialize()
 
 	// 期待されるソート順: a.txt, b.txt, dir1, dir2
 	var expectedBody bytes.Buffer

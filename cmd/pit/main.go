@@ -12,6 +12,7 @@ type CLI struct {
 	Init       cmd.InitCmd       `cmd:"" help:"Initialize a new pit repository"`
 	HashObject cmd.HashObjectCmd `cmd:"" help:"Compute hash of a file"`
 	CatFile    cmd.CatFileCmd    `cmd:"" help:"Print file from hash"`
+	WriteTree  cmd.WriteTreeCmd  `cmd:"" help:"Write tree object from files"`
 }
 
 func main() {
