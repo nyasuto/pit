@@ -22,7 +22,7 @@ func isDirectory(mode ObjectMode) bool {
 }
 
 func (t *Tree) toObject() object {
-	return t.serialize()
+	return t.Serialize()
 
 }
 func (t *Tree) FindEntry(name string) (TreeEntry, bool) {
@@ -77,7 +77,7 @@ func (t *Tree) AddEntry(entry TreeEntry) error {
 }
 
 // NewTree creates a new tree object from the provided entries.
-func (t *Tree) serialize() object {
+func (t *Tree) Serialize() object {
 	entries := t.Entries
 	// エントリのソート（Git仕様に準拠）
 	sort.Slice(entries, func(i, j int) bool {
