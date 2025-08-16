@@ -30,7 +30,7 @@ const (
 	ModeSubmodule  ObjectMode = 0160000 // サブモジュール
 )
 
-const gitObjectsDir = ".test-git/objects"
+const gitObjectsDir = ".pit/objects"
 
 type object struct {
 	Type ObjectType // Type of the object (e.g., "blob", "tree", "commit")

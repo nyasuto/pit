@@ -4,32 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
-	"github.com/spf13/cobra"
 )
-
-func initCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "init [directory]",
-		Short: "Initialize a new pit repository",
-		Long: `Initialize a new pit repository in the specified directory.
-If no directory is specified, initializes in the current directory.
-
-This creates a .pit directory with the necessary structure.`,
-		Args: cobra.MaximumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			// デフォルトは現在のディレクトリ
-			targetDir := "."
-			if len(args) > 0 {
-				targetDir = args[0]
-			}
-
-			return initRepository(targetDir)
-		},
-	}
-
-	return cmd
-}
 
 func initRepository(targetDir string) error {
 	// 絶対パスに変換
@@ -107,4 +82,17 @@ func createInitialFiles(pitDir string) error {
 	}
 
 	return nil
+}
+
+// Kong version of init command
+type InitCmd struct {
+	Directory string `arg:"" optional:"" help:"Target directory for initialization (default: current directory)"`
+}
+
+func (cmd *InitCmd) Run() error {
+	targetDir := "."
+	if cmd.Directory != "" {
+		targetDir = cmd.Directory
+	}
+	return initRepository(targetDir)
 }
