@@ -8,7 +8,7 @@ import (
 	"github.com/nyasuto/pit/internal/objects"
 )
 
-// Kong version of hash-object command
+// hash-object command
 type HashObjectCmd struct {
 	Write bool   `short:"w" help:"Write the object to the .pit/objects directory"`
 	Stdin bool   `help:"Read from stdin instead of a file"`

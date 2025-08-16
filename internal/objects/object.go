@@ -52,6 +52,20 @@ func New(t ObjectType, data []byte) object {
 		Data: content,
 	}
 }
+
+func (o *object) String() string {
+	return fmt.Sprintf("%s", o.Data)
+}
+
+func ReadFromHash(hashString string) (obj object, err error) {
+	h, err := hash.Parse(hashString)
+	if err != nil {
+		return object{}, fmt.Errorf("invalid hash: %s", hashString)
+	}
+	path := filepath.Join(gitObjectsDir, h.String()[:2], h.String()[2:])
+	return Read(path)
+}
+
 func Read(path string) (object, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
