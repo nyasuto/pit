@@ -9,6 +9,6 @@ require (
 )
 
 require (
-	github.com/alecthomas/kong v1.12.0
+	github.com/alecthomas/kong v1.12.1
 	github.com/stretchr/testify v1.10.0
 )
